@@ -1,24 +1,24 @@
 #include <Servo.h>
-int dt = 10;
+int dt = 1;
 int servoPosOld;
 int servoPosNew;
 int servoDif;
 int direct;
 int j;
 int servoPin = A5;
-int servoPos = 175;
+int servoPos = 1500;
 Servo teaServo;
 
 void setup() {
   Serial.begin(9600);
   teaServo.attach(servoPin);
-  teaServo.write(90);
-  servoPosOld = 90;
+  teaServo.writeMicroseconds(1500);
+  servoPosOld = 1500;
   servoPos = servoPosOld;
 }
 
 void loop() {
-  Serial.println("Input angle 0-175.");
+  Serial.println("Input angle 575-2375.");
   while (Serial.available() == 0){
   }
   servoPosNew = Serial.parseInt();
@@ -37,7 +37,7 @@ void loop() {
     else{
       servoPos++;
     }
-    teaServo.write(servoPos);
+    teaServo.writeMicroseconds(servoPos);
     delay(dt);
   }
   servoPosOld = servoPos;
