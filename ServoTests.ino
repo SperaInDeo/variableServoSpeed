@@ -1,45 +1,70 @@
 #include <Servo.h>
-int dt = 1;
-int servoPosOld;
 int servoPosNew;
-int servoDif;
-int direct;
-int j;
 int servoPin = A5;
 int servoPos = 1500;
-Servo teaServo;
+int myServoSpeed = 5;
+bool notRunning = 1;
+Servo myServo;
+
+// Documentation
+// Requires #include <Servo.h>
+// Servo functionServo is the servo object usually created at the beginning of the sketch w/ example: Servo myServo;
+// int servoPosition (1-170). Check your model. 575-2375 fall within the limits for servo model SM-S2309S
+// int servoSpeed. milliseconds to delay the action of the servo motor. recommend values between 1-100
+// Returns bool moveComplete = 1 after the movement has finished.
+// Function should run in an undelayed loop while it returns moveComplete = 0 for best performance
+//  Each time the function is run it will execute a single step (position)
+//  if the number of prescribed milliseconds servoSpeed has elapsed.
+// Currently only gives 170 degrees of motion to account for cheaper servos
+// Motion values (575, 2375) should currently be hardcoded in depending on initial testing of particular servo.
+
+bool speraInServo(Servo functionServo, int servoPosition, unsigned int servoSpeed){
+  static bool moveComplete = 1;
+  static unsigned long moveTime;
+  static int currentPosition;
+  // First time new servoPosition is received only variables
+  if (moveComplete == 1){
+    currentPosition = functionServo.read();
+    currentPosition = map(currentPosition, 0, 170, 575, 2375);
+    moveTime = millis();
+  }
+
+  servoPosition = map(servoPosition, 0, 170, 575, 2375);
+  if (millis() >= moveTime){
+      if (servoPosition < currentPosition){
+        currentPosition--;
+        functionServo.writeMicroseconds(currentPosition);
+      }
+      else if (servoPosition > currentPosition){
+        currentPosition++;
+        functionServo.writeMicroseconds(currentPosition);
+      }
+      else{
+        moveComplete = 1;
+        return moveComplete;
+      }
+      moveTime += servoSpeed;
+  }
+  moveComplete = 0;
+  return moveComplete;
+}
 
 void setup() {
   Serial.begin(9600);
-  teaServo.attach(servoPin);
-  teaServo.writeMicroseconds(1500);
-  servoPosOld = 1500;
-  servoPos = servoPosOld;
+  myServo.attach(servoPin);
+  // Just to check if servo initializes and moves properly at the beginning or upon restart
+  myServo.writeMicroseconds(700);
 }
 
-void loop() {
-  Serial.println("Input angle 575-2375.");
-  while (Serial.available() == 0){
-  }
-  servoPosNew = Serial.parseInt();
-  servoDif = servoPosNew - servoPosOld;
-  if (servoDif < 0){
-    servoDif = servoDif*(-1);
-    direct = 0;
-  }
-  else{
-    direct = 1;
-  }
-  for (j=1; j<=servoDif; j++){
-    if (direct == 0){
-      servoPos--;
-    }
-    else{
-      servoPos++;
-    }
-    teaServo.writeMicroseconds(servoPos);
-    delay(dt);
-  }
-  servoPosOld = servoPos;
 
+// Testing loop
+void loop() {
+  if (notRunning == 1){
+    Serial.println("Input angle 0-170.");
+    while (Serial.available() == 0){
+    }
+    servoPosNew = Serial.parseInt();
+  }
+  
+  notRunning = speraInServo(myServo, servoPosNew, myServoSpeed);
 }
