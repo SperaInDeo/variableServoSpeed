@@ -1,7 +1,7 @@
 #include <Servo.h>
 int servoPosNew;
 int servoPin = A5;
-int myServoSpeed = 2500;
+int myServoSpeed = 500;
 bool notRunning = 1;
 Servo myServo;
 
@@ -9,7 +9,7 @@ Servo myServo;
 // Requires #include <Servo.h>
 // Servo functionServo is the servo object usually created at the beginning of the sketch w/ example: Servo myServo;
 // int servoPosition (1-180). Check your model. 550-2400 fall within the limits for servo model SM-S2309S
-// int servoSpeed. microeconds*4 to delay the action of the servo motor. recommend values >50 
+// int servoSpeed. microeconds*4 to delay the action of the servo motor. recommend values >50 (250 will = 1 millisecond in the code) 
 // Returns bool moveComplete = 1 after the movement has finished.
 // Function should run in an undelayed loop while it returns moveComplete = 0 for best performance
 //  Each time the function is run it will execute a single step (position)
