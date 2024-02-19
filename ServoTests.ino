@@ -1,15 +1,14 @@
 #include <Servo.h>
 int servoPosNew;
 int servoPin = A5;
-int servoPos = 1500;
-int myServoSpeed = 5;
+int myServoSpeed = 2;
 bool notRunning = 1;
 Servo myServo;
 
 // Documentation
 // Requires #include <Servo.h>
 // Servo functionServo is the servo object usually created at the beginning of the sketch w/ example: Servo myServo;
-// int servoPosition (1-170). Check your model. 575-2375 fall within the limits for servo model SM-S2309S
+// int servoPosition (1-180). Check your model. 550-2400 fall within the limits for servo model SM-S2309S
 // int servoSpeed. milliseconds to delay the action of the servo motor. recommend values between 1-100
 // Returns bool moveComplete = 1 after the movement has finished.
 // Function should run in an undelayed loop while it returns moveComplete = 0 for best performance
@@ -25,11 +24,11 @@ bool speraInServo(Servo functionServo, int servoPosition, unsigned int servoSpee
   // First time new servoPosition is received only variables
   if (moveComplete == 1){
     currentPosition = functionServo.read();
-    currentPosition = map(currentPosition, 0, 170, 575, 2375);
+    currentPosition = map(currentPosition, 0, 180, 550, 2400);
     moveTime = millis();
   }
 
-  servoPosition = map(servoPosition, 0, 170, 575, 2375);
+  servoPosition = map(servoPosition, 0, 180, 550, 2400);
   if (millis() >= moveTime){
       if (servoPosition < currentPosition){
         currentPosition--;
@@ -56,11 +55,9 @@ void setup() {
   myServo.writeMicroseconds(700);
 }
 
-
-// Testing loop
 void loop() {
   if (notRunning == 1){
-    Serial.println("Input angle 0-170.");
+    Serial.println("Input angle 0-180.");
     while (Serial.available() == 0){
     }
     servoPosNew = Serial.parseInt();
